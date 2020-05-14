@@ -8,8 +8,10 @@ from pyspark.sql.types import StructField, StringType, StructType
 
 class AwsSparkJob:
     def __init__(self, **kwargs):
-        self.source = kwargs.get('source')
-        self.sink = kwargs.get('sink')
+        # self.source = kwargs.get('source')
+        # self.sink = kwargs.get('sink')
+        self.source = "./source/t8.shakespeare.txt"
+        self.sink = "./output"
 
     def read_data(self):
         spark = SparkSession.builder.appName('aws_spark_job').getOrCreate()
