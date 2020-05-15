@@ -16,7 +16,7 @@ class SimpleWordCountExample:
         self.get_current_time_func = lambda: int(round(time.time() * 1000))
 
     def load_source_file(self) -> DataFrame:
-        return pd.read_csv("./source/t8.shakespeare.txt", sep=' ', error_bad_lines=False, header=None, names=['word'])
+        return pd.read_csv("../source/t8.shakespeare.txt", sep=' ', error_bad_lines=False, header=None, names=['word'])
 
     def do_word_count(self, df: DataFrame) -> DataFrame:
         word_counts_series = df.word.value_counts()
