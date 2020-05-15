@@ -19,7 +19,7 @@ dag = DAG(
     'airflow_practice',
     default_args=default_args,
     description='airflow practice for first task',
-    schedule_interval=timedelta(minutes=1),
+    schedule_interval=timedelta(hours=1),
 )
 
 
@@ -31,9 +31,11 @@ def pipeline_complete_with_msg():
     print("pipeline succeed")
 
 
+source = "https://ocw.mit.edu/ans7870/6/6.006/s08/lecturenotes/files/t8.shakespeare.txt"
+
+
 def validate_source_check():
-    status_code = requests.get(
-        "https://ocw.mit.edu/ans7870/6/6.006/s08/lecturenotes/files/t8.shakespeare.txt").status_code
+    status_code = requests.get(source).status_code
     if status_code == 200:
         return "succeed_check_source_availability"
     else:
