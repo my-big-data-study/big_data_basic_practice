@@ -1,6 +1,8 @@
 from datetime import timedelta
 
 import requests
+from pyspark import SparkConf, SparkContext
+
 from airflow import DAG
 from airflow.operators.python_operator import BranchPythonOperator, PythonOperator
 from airflow.utils.dates import days_ago
@@ -43,7 +45,11 @@ def validate_source_check():
 
 
 def read_data():
-    pass
+    spark_conf = SparkConf().setAppName("airflow_practice").setMaster("spark://6377f818db72:7077")
+    spark_context = SparkContext(spark_conf)
+    words = spark_context.textFile(source).flatMap(lambda row: row.split(" "))
+    word_count = words.map(lambda word: (word, 1)).reduceByKey(lambda a, b: a + b)
+    word_count.saveAsTextFile("output.txt")
 
 
 def validate_process_result():
