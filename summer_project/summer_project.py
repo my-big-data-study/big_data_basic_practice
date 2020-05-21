@@ -12,7 +12,7 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
-    'retry_delay': timedelta(seconds=5),
+    'retry_delay': timedelta(hours=1),
 }
 dag = DAG(
     'summer_project',
@@ -21,21 +21,16 @@ dag = DAG(
     schedule_interval=timedelta(hours=1),
 )
 
-# spark_submit_operator = SparkSubmitOperator(task_id='spark_submit_job',
-#                                             conn_id="spark_default",
-#                                             application="s3://mhtang/data-practice/aws_spark_job.py",
-#                                             dag=dag)
-#
-t1 = BashOperator(
-    task_id='print_date',
+start_pipeline = BashOperator(
+    task_id='start_pipeline',
     bash_command='date',
     dag=dag,
 )
 
-t3 = BashOperator(
+spark_submit_job = BashOperator(
     task_id='spark_submit_job',
     bash_command='spark-submit --master yarn s3://mhtang/data-practice/aws_spark_job.py --source s3://mhtang/data-practice/t8.shakespeare.txt --sink s3://mhtang/data-practice/output',
     dag=dag
 )
 
-t1 >> t3
+start_pipeline >> spark_submit_job
