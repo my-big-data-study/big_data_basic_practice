@@ -27,10 +27,16 @@ start_pipeline = BashOperator(
     dag=dag,
 )
 
+write_data_job = BashOperator(
+    task_id='write_data_job',
+    bash_command='spark-submit --master yarn s3://mhtang/summer_project/save_all_data.py --source http://data.gdeltproject.org/gdeltv2/masterfilelist.txt --sink s3://mhtang/summer_project/output',
+    dag=dag
+)
+
 spark_submit_job = BashOperator(
     task_id='spark_submit_job',
     bash_command='spark-submit --master yarn s3://mhtang/data-practice/aws_spark_job.py --source s3://mhtang/data-practice/t8.shakespeare.txt --sink s3://mhtang/data-practice/output',
     dag=dag
 )
 
-start_pipeline >> spark_submit_job
+start_pipeline >> write_data_job >> spark_submit_job
