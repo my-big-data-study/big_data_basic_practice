@@ -10,6 +10,9 @@ class SaveAllData:
     def __init__(self, **kwargs):
         self.source = kwargs.get('source')
         self.sink = kwargs.get('sink')
+        # 本地测试改类的功能
+        # self.source = "http://data.gdeltproject.org/gdeltv2/lastupdate.txt"
+        # self.sink = "masterfilelist.csv"
 
     def read_data(self):
         spark = SparkSession.builder.appName('save_all_data').getOrCreate()
