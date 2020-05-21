@@ -29,7 +29,13 @@ start_pipeline = BashOperator(
 
 save_full_data_job = BashOperator(
     task_id='save_full_data_job',
-    bash_command='spark-submit --master yarn s3://mhtang/summer_project/save_full_data.py --source http://data.gdeltproject.org/gdeltv2/masterfilelist.txt --sink s3://mhtang/summer_project/output',
+    bash_command='spark-submit --master yarn s3://mhtang/summer_project/save_full_data.py --source http://data.gdeltproject.org/gdeltv2/masterfilelist.txt --sink s3://mhtang/summer_project/output/master_file_list.parquet',
+    dag=dag
+)
+
+uncompress_all_data_job = BashOperator(
+    task_id='uncompress_all_data_job',
+    bash_command='spark-submit --master yarn s3://mhtang/summer_project/uncompress_all_data.py --source s3://mhtang/summer_project/output/master_file_list.parquet',
     dag=dag
 )
 
@@ -39,4 +45,4 @@ spark_submit_job = BashOperator(
     dag=dag
 )
 
-start_pipeline >> save_full_data_job >> spark_submit_job
+start_pipeline >> save_full_data_job >> uncompress_all_data_job >> spark_submit_job
