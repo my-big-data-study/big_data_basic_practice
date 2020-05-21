@@ -22,9 +22,7 @@ class UncompressAllDataJob:
             .select(col('csv_url')) \
             .rdd \
             .map(lambda row: row.csv_url) \
-            .foreach(lambda csv_url: {
-                print(csv_url)
-            })
+            .foreach(lambda csv_url: print(csv_url))
 
     @staticmethod
     def read_compressed_csv(csv_url):
