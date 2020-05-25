@@ -1,3 +1,4 @@
+import os
 import sys
 from argparse import ArgumentParser
 
@@ -14,26 +15,67 @@ class OperateDataFromAws:
             .option("delimiter", "\t") \
             .option("inferSchema", "true") \
             .csv(self.source)
-        data_frame.toDF("GLOBALEVENTID",
-                        "EventTimeDate",
-                        "MentionTimeDate",
-                        "MentionType",
-                        "MentionSourceName",
-                        "MentionIdentifier",
-                        "SentenceID",
-                        "Actor1CharOffset",
-                        "Actor2CharOffset",
-                        "ActionCharOffset",
-                        "InRawText",
-                        "Confidence",
-                        "MentionDocLen",
-                        "MentionDocTone",
-                        "MentionDocTranslationInfo",
-                        "Extras")
-        data_frame.show()
+
+        return data_frame.toDF("GLOBALEVENTID",
+                               "EventTimeDate",
+                               "MentionTimeDate",
+                               "MentionType",
+                               "MentionSourceName",
+                               "MentionIdentifier",
+                               "SentenceID",
+                               "Actor1CharOffset",
+                               "Actor2CharOffset",
+                               "ActionCharOffset",
+                               "InRawText",
+                               "Confidence",
+                               "MentionDocLen",
+                               "MentionDocTone",
+                               "MentionDocTranslationInfo",
+                               "Extras")
+
+    def read_data_from_elastic_search(self):
+        query = """{
+          "query": {
+            "match_all": {}
+          }  
+        }"""
+
+        spark = SparkSession.builder.appName('operate_data_from_aws').getOrCreate()
+
+        data = spark.read \
+            .format("es") \
+            .option('es.nodes', '127.0.0.1') \
+            .option('es.port', '9200') \
+            .option('es.nodes.wan.only', 'true') \
+            .option("es.net.http.auth.user", "admin") \
+            .option("es.net.http.auth.pass", "HQtmh101999.") \
+            .load("user")
+        data.show()
+
+    def write_data_to_elastic_search(self, df):
+        df.write.format('org.elasticsearch.spark.sql') \
+            .option('es.nodes', 'https://search-summer-bb3wlmxdkyv4my6xdvwk6odmnu.ap-northeast-2.es.amazonaws.com') \
+            .option("es.net.http.auth.user", "admin") \
+            .option("es.net.http.auth.pass", "HQtmh101999.") \
+            .option('es.resource', 'gdelt/mentions') \
+            .option('es.mapping.id', 'GLOBALEVENTID') \
+            .option('es.write.operation', 'update') \
+            .mode('append') \
+            .save()
 
     def run(self):
-        self.operate_data()
+        data_frame = self.operate_data()
+        data_frame.show()
+        # self.write_data_to_elastic_search(data_frame)
+        self.read_data_from_elastic_search()
+
+
+# os.environ["PYSPARK_PYTHON"] = "/usr/bin/python3"
+# os.environ["PYSPARK_DRIVER_PYTHON"] = "/usr/bin/python3"
+# pay attention here, jars could be added at here
+os.environ['PYSPARK_SUBMIT_ARGS'] = \
+    '--jars /Users/mhtang/Desktop/大数据培训/data-storage-execrise/summer_project/elasticsearch-spark-20_2.11-7.7.0.jar ' \
+    'pyspark-shell'
 
 
 def load_args(argv):
