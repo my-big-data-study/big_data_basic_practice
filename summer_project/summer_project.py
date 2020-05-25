@@ -1,8 +1,9 @@
 from datetime import timedelta
 
-from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
 from airflow.utils.dates import days_ago
+
+from airflow import DAG
 
 default_args = {
     'owner': 'airflow',
@@ -27,22 +28,34 @@ start_pipeline = BashOperator(
     dag=dag,
 )
 
-save_full_data_job = BashOperator(
-    task_id='save_full_data_job',
-    bash_command='spark-submit --master yarn s3://mhtang/summer_project/save_full_data.py --source http://data.gdeltproject.org/gdeltv2/masterfilelist.txt --sink s3://mhtang/summer_project/output/master_file_list.parquet',
+# save_full_data_job = BashOperator(
+#     task_id='save_full_data_job',
+#     bash_command='spark-submit --master yarn s3://mhtang/summer_project/save_full_data.py --source http://data.gdeltproject.org/gdeltv2/masterfilelist.txt --sink s3://mhtang/summer_project/output/master_file_list.parquet',
+#     dag=dag
+# )
+
+save_data_to_aws_job = BashOperator(
+    task_id='save_data_to_aws_job',
+    bash_command="spark-submit --master yarn s3://mhtang/summer_project/save_data_to_aws.py --sink s3://mhtang/summer_project/source/master_file_list.parquet.gzip",
     dag=dag
 )
 
-uncompress_all_data_job = BashOperator(
-    task_id='uncompress_all_data_job',
-    bash_command='spark-submit --master yarn s3://mhtang/summer_project/uncompress_all_data.py --source s3://mhtang/summer_project/output/master_file_list.parquet',
+operate_data_from_aws_job = BashOperator(
+    task_id='operate_data_from_aws_job',
+    bash_command="spark-submit --master yarn s3://mhtang/summer_project/operate_data_from_aws.py  --source s3://mhtang/summer_project/source/master_file_list.parquet.gzip",
     dag=dag
 )
 
-spark_submit_job = BashOperator(
-    task_id='spark_submit_job',
-    bash_command='spark-submit --master yarn s3://mhtang/data-practice/aws_spark_job.py --source s3://mhtang/data-practice/t8.shakespeare.txt --sink s3://mhtang/data-practice/output',
-    dag=dag
-)
+# uncompress_all_data_job = BashOperator(
+#     task_id='uncompress_all_data_job',
+#     bash_command='spark-submit --master yarn s3://mhtang/summer_project/save_all_single_data.py --source s3://mhtang/summer_project/output/master_file_list.parquet',
+#     dag=dag
+# )
+#
+# spark_submit_job = BashOperator(
+#     task_id='spark_submit_job',
+#     bash_command='spark-submit --master yarn s3://mhtang/data-practice/aws_spark_job.py --source s3://mhtang/data-practice/t8.shakespeare.txt --sink s3://mhtang/data-practice/output',
+#     dag=dag
+# )
 
-start_pipeline >> save_full_data_job >> uncompress_all_data_job >> spark_submit_job
+start_pipeline >> save_data_to_aws_job >> operate_data_from_aws_job
