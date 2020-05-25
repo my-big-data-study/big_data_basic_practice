@@ -10,7 +10,27 @@ class OperateDataFromAws:
 
     def operate_data(self):
         spark = SparkSession.builder.appName('operate_data_from_aws').getOrCreate()
-        spark.read.parquet(self.source).show()
+        data_frame = spark.read.option("header", "false") \
+            .option("delimiter", "\t") \
+            .option("inferSchema", "true") \
+            .csv(self.source)
+        data_frame.toDF("GLOBALEVENTID",
+                        "EventTimeDate",
+                        "MentionTimeDate",
+                        "MentionType",
+                        "MentionSourceName",
+                        "MentionIdentifier",
+                        "SentenceID",
+                        "Actor1CharOffset",
+                        "Actor2CharOffset",
+                        "ActionCharOffset",
+                        "InRawText",
+                        "Confidence",
+                        "MentionDocLen",
+                        "MentionDocTone",
+                        "MentionDocTranslationInfo",
+                        "Extras")
+        data_frame.show()
 
     def run(self):
         self.operate_data()
