@@ -8,7 +8,6 @@ from pyspark.sql import SparkSession
 class OperateDataFromAws:
     def __init__(self, **kwargs):
         self.source = kwargs.get('source')
-        self.source = "data/*.CSV"
 
     def operate_data(self):
         spark = SparkSession.builder.appName('operate_data_from_aws').getOrCreate()
@@ -35,11 +34,6 @@ class OperateDataFromAws:
                                "Extras")
 
     def read_data_from_elastic_search(self):
-        # query = """{
-        #   "query": {
-        #     "match_all": {}
-        #   }
-        # }"""
         query = """{   
              "query": {
                 "match": {
@@ -78,7 +72,7 @@ class OperateDataFromAws:
 
 
 os.environ['PYSPARK_SUBMIT_ARGS'] = \
-    '--jars /Users/mhtang/Desktop/大数据培训/data-storage-execrise/summer_project/elasticsearch-spark-20_2.11-7.7.0.jar ' \
+    '--jars ./elasticsearch-spark-20_2.11-7.7.0.jar ' \
     'pyspark-shell'
 
 
