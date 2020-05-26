@@ -35,18 +35,25 @@ class OperateDataFromAws:
                                "Extras")
 
     def read_data_from_elastic_search(self):
-        query = """{
-          "query": {
-            "match_all": {}
-          }  
-        }"""
-
+        # query = """{
+        #   "query": {
+        #     "match_all": {}
+        #   }
+        # }"""
+        query = """{   
+             "query": {
+                "match": {
+                  "GLOBALEVENTID":"474969244"
+                }
+              }
+            }"""
         spark = SparkSession.builder.appName('operate_data_from_aws').getOrCreate()
 
         data = spark.read \
             .format("es") \
             .option('es.nodes', 'http://localhost') \
             .option('es.port', '9200') \
+            .option("es.query", query) \
             .option('es.nodes.wan.only', 'true') \
             .option("es.net.http.auth.user", "admin") \
             .option("es.net.http.auth.pass", "HQtmh101999.") \
