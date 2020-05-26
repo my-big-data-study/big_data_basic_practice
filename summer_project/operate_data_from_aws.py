@@ -66,13 +66,10 @@ class OperateDataFromAws:
 
     def run(self):
         data_frame = self.operate_data()
-        self.read_data_from_elastic_search()
         self.write_data_to_elastic_search(data_frame)
+        self.read_data_from_elastic_search()
 
 
-# os.environ["PYSPARK_PYTHON"] = "/usr/bin/python3"
-# os.environ["PYSPARK_DRIVER_PYTHON"] = "/usr/bin/python3"
-# pay attention here, jars could be added at here
 os.environ['PYSPARK_SUBMIT_ARGS'] = \
     '--jars /Users/mhtang/Desktop/大数据培训/data-storage-execrise/summer_project/elasticsearch-spark-20_2.11-7.7.0.jar ' \
     'pyspark-shell'
