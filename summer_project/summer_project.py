@@ -42,7 +42,7 @@ start_pipeline = BashOperator(
 
 operate_data_from_aws_job = BashOperator(
     task_id='operate_data_from_aws_job',
-    bash_command="spark-submit --master yarn s3://mhtang/summer_project/operate_data_from_aws.py  --source s3://mhtang/summer_project/source/*.CSV",
+    bash_command="spark-submit --packages org.elasticsearch:elasticsearch-spark-20_2.11:7.4.2 --master yarn s3://mhtang/summer_project/operate_data_from_aws.py  --source s3://mhtang/summer_project/source/*.CSV",
     dag=dag
 )
 
