@@ -50,25 +50,24 @@ class OperateDataFromAws:
             .option('es.nodes.wan.only', 'true') \
             .option("es.net.http.auth.user", "admin") \
             .option("es.net.http.auth.pass", "HQtmh101999.") \
-            .load("user")
+            .load("gdelt")
         data.show()
 
     def write_data_to_elastic_search(self, df):
         df.write.format('org.elasticsearch.spark.sql') \
-            .option('es.nodes', 'https://search-summer-bb3wlmxdkyv4my6xdvwk6odmnu.ap-northeast-2.es.amazonaws.com') \
+            .option('es.nodes', 'http://localhost') \
+            .option('es.port', '9200') \
+            .option('es.nodes.wan.only', 'true') \
             .option("es.net.http.auth.user", "admin") \
             .option("es.net.http.auth.pass", "HQtmh101999.") \
-            .option('es.resource', 'gdelt/mentions') \
             .option('es.mapping.id', 'GLOBALEVENTID') \
-            .option('es.write.operation', 'update') \
             .mode('append') \
-            .save()
+            .save("gdelt/mentions")
 
     def run(self):
         data_frame = self.operate_data()
-        data_frame.show()
-        # self.write_data_to_elastic_search(data_frame)
         self.read_data_from_elastic_search()
+        self.write_data_to_elastic_search(data_frame)
 
 
 # os.environ["PYSPARK_PYTHON"] = "/usr/bin/python3"
