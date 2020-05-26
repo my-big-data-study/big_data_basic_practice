@@ -55,8 +55,8 @@ class OperateDataFromAws:
 
         data = spark.read \
             .format("es") \
-            .option('es.nodes', 'http://localhost') \
-            .option('es.port', '9200') \
+            .option('es.nodes', 'https://search-summer-bb3wlmxdkyv4my6xdvwk6odmnu.ap-northeast-2.es.amazonaws.com') \
+            .option('es.port', '443') \
             .option("es.query", query) \
             .option('es.nodes.wan.only', 'true') \
             .option("es.net.http.auth.user", self.es_username) \
@@ -66,8 +66,8 @@ class OperateDataFromAws:
 
     def write_data_to_elastic_search(self, df):
         df.write.format('org.elasticsearch.spark.sql') \
-            .option('es.nodes', 'http://localhost') \
-            .option('es.port', '9200') \
+            .option('es.nodes', 'https://search-summer-bb3wlmxdkyv4my6xdvwk6odmnu.ap-northeast-2.es.amazonaws.com') \
+            .option('es.port', '443') \
             .option('es.nodes.wan.only', 'true') \
             .option("es.net.http.auth.user", self.es_username) \
             .option("es.net.http.auth.pass", self.es_password) \
