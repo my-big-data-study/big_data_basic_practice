@@ -72,7 +72,7 @@ class OperateDataFromAws:
 
 
 os.environ['PYSPARK_SUBMIT_ARGS'] = \
-    '--jars ./elasticsearch-spark-20_2.11-7.7.0.jar ' \
+    '--packages org.elasticsearch:elasticsearch-spark-20_2.11:7.4.0 ' \
     'pyspark-shell'
 
 
