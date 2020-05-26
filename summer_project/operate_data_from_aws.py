@@ -8,6 +8,7 @@ from pyspark.sql import SparkSession
 class OperateDataFromAws:
     def __init__(self, **kwargs):
         self.source = kwargs.get('source')
+        self.source = "data/*.CSV"
 
     def operate_data(self):
         spark = SparkSession.builder.appName('operate_data_from_aws').getOrCreate()
@@ -44,7 +45,7 @@ class OperateDataFromAws:
 
         data = spark.read \
             .format("es") \
-            .option('es.nodes', '127.0.0.1') \
+            .option('es.nodes', 'http://localhost') \
             .option('es.port', '9200') \
             .option('es.nodes.wan.only', 'true') \
             .option("es.net.http.auth.user", "admin") \
