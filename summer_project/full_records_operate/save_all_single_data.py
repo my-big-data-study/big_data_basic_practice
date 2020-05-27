@@ -9,7 +9,7 @@ from pyspark.sql.functions import *
 class SaveAllSingleData:
     def __init__(self, **kwargs):
         self.source = kwargs.get('source')
-        self.source = "output/master_file_list.parquet"
+        self.source = "../output/master_file_list.parquet"
 
     def read_data(self):
         spark = SparkSession.builder.appName('save_all_single_data').getOrCreate()
@@ -22,7 +22,7 @@ class SaveAllSingleData:
             file_name = url.split("/")[-1]
             if file_name.endswith('mentions.CSV.zip'):
                 response = requests.get(url)
-                with open("data/" + file_name, 'wb') as file:
+                with open("../data/" + file_name, 'wb') as file:
                     file.write(response.content)
 
     def run(self):
