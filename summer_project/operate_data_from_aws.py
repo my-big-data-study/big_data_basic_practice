@@ -9,7 +9,7 @@ class OperateDataFromAws:
         self.source = kwargs.get('source')
         self.es_username = "admin"
         self.es_password = "HQtmh101999."
-        self.source = "data/*.CSV"
+        # self.source = "data/*.CSV"
 
     def operate_data(self):
         spark = SparkSession.builder \
